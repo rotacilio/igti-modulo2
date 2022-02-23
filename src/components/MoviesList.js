@@ -1,29 +1,9 @@
 import React from 'react';
-import { TouchableOpacity, ScrollView, View, FlatList, StyleSheet, Text, Image } from 'react-native';
+import { TouchableOpacity, View, FlatList, StyleSheet, Text, Image } from 'react-native';
 import add_to_favorite from "../../assets/icons/add_to_favorite.png";
-import added_to_favorite from "../../assets/icons/add_to_favorite_checked.png";
 
-
-const DATA = [
-    {
-        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        title: 'First Item',
-        image: 'https://observatoriodocinema.uol.com.br/wp-content/uploads/2020/04/Johnny_Depp_Pirates_of_the_Caribbean_Dead_Men_Tell_521035_3840x2160.jpg'
-    },
-    {
-        id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-        title: 'Second Item',
-        image: 'https://observatoriodocinema.uol.com.br/wp-content/uploads/2020/04/Johnny_Depp_Pirates_of_the_Caribbean_Dead_Men_Tell_521035_3840x2160.jpg'
-    },
-    {
-        id: '58694a0f-3da1-471f-bd96-145571e29d72',
-        title: 'Third Item',
-        image: 'https://observatoriodocinema.uol.com.br/wp-content/uploads/2020/04/Johnny_Depp_Pirates_of_the_Caribbean_Dead_Men_Tell_521035_3840x2160.jpg'
-    },
-];
-
-const Item = ({ title, image }) => (
-    <View style={styles.item}>
+const Item = ({ index, title, image }) => (
+    <View key={index} style={[styles.item, {marginTop: index === 0 ? 16 : 0}]}>
         <Image
             source={{ uri: image }}
             style={{
@@ -53,21 +33,31 @@ const Item = ({ title, image }) => (
     </View>
 );
 
-const MoviesList = () => {
-    const renderItem = ({ item }) => (
-        <Item title={item.title} image={item.image} />
-    );
+const MoviesList = ({ data }) => {
+
+    const [total, setTotal] = React.useState(0);
+
+    React.useEffect(() => setTotal(typeof data !== "undefined" ? data.length : 0), [data]);
+
+    const renderItem = (index, item) => {
+        return (
+            <Item index={index} title={`${item.Title} - ${item.Year}`} image={item.Poster} />
+        );
+    };
 
     return (
-        <View>
-            <Text style={styles.pageTitle}>Lista de filmes</Text>
+        <>
+            <Text style={styles.pageTitle}>
+                {total === 0 ? "Nenhum filme encontrado" : `${total} filmes encontrados`}
+            </Text>
             <FlatList
-                nestedScrollEnabled={true}
-                data={DATA}
-                renderItem={renderItem}
+                data={data}
+                renderItem={({ item, index }) => {
+                    return renderItem(index, item);
+                }}
                 keyExtractor={item => item.id}
             />
-        </View>
+        </>
     );
 }
 
@@ -78,7 +68,7 @@ const styles = StyleSheet.create({
     },
     item: {
         backgroundColor: '#f9c2ff',
-        marginTop: 16,
+        marginBottom: 16,
         marginHorizontal: 12,
         borderRadius: 8,
         overflow: 'hidden',

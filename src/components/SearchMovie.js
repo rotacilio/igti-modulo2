@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {
     Text,
     TextInput,
@@ -7,16 +7,24 @@ import {
     StyleSheet
 } from "react-native";
 
-const SearchMovie = () => {
+const SearchMovie = ({ onClick }) => {
+
+    const [text, onChangeText] = useState(null);
+
     return (
         <View style={{ paddingHorizontal: 12 }}>
             <Text>Buscar por título</Text>
-            <View style={styles.searchView} >
+            <View style={styles.searchView}>
                 <TextInput
                     style={styles.input}
                     placeholder="Digite o nome do filme"
+                    value={text}
+                    onChangeText={onChangeText}
                 />
-                <TouchableOpacity style={styles.button} >
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => onClick(text)}
+                >
                     <Text style={styles.buttonText} >
                         Buscar
                     </Text>
